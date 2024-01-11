@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <unistd.h>
 
 using namespace std;
 
@@ -108,34 +109,60 @@ private:
 
 int main() {
 
-    ifstream inputFile;
-    inputFile.open("C:Users\karls\Downloads\library_books(1)");
 
-    string line = "";
-    while (getline(inputFile, line)){
+    ifstream file("library_books.csv");
+
+    if (!file.is_open()) {
+        cout << "Error opening the file!" << endl;
+        return 1; 
+    }
+
+    vector<Book*> Books;
+
+    int BookID;
+    string BookName;
+    int PageCount;
+    string AuthorFirstName;
+    string AuthorLastName;
+    string BookType;
+
+    string tempString;
+    string line;
+
+    while (getline(file, line)){
         
-        int BookID;
-        string BookName;
-        int PageCount;
-        string AuthorFirstName;
-        string AuthorLastName;
-        string BookType;
-        string tempString;
+        
 
         stringstream inputString(line);
+        //This code will help retrieve the ID of a book within the library achieve
+        getline(inputString, tempString, ',');
+        BookID = atoi(tempString.c_str());
 
-        // BookID = atoi(tempString, tempString, ',');
         getline(inputString, BookName, ',');
+
+        //This code will help retrieve the amount of pages within each book
+        getline(inputString, tempString, ',');
         PageCount = atoi(tempString.c_str());
+
         getline(inputString, AuthorFirstName, ',');
         getline(inputString, AuthorLastName, ',');
         getline(inputString, BookType, ',');
-        getline(inputString, tempString);
 
 
+         Books.push_back(new Book(BookID, BookName, AuthorFirstName, AuthorLastName ));
 
         line = "";
     }
+
+    // Display each book - RM
+    cout << "Loaded Books:" << endl;
+    for (const auto& book : Books) {
+        cout << "Book ID: " << (*book).getBookID() << ", Name: " << (*book).getBookName()
+        << ", Author: " << (*book).getAuthorFirstName() << " " << (*book).getAuthorLastName() << endl;
+    }
+
+
+
 
 
     Librarian librarian(1, "LibrarianName", "LibrarianEmail", "LibrarianAddress", 50000);
